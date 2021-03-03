@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Express Stripe Checkout</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+  </head>
+  <body>
+    <section>
+      <div>
+        <img src="https://via.placeholder.com/250" alt="Placeholder Image" />
+        <div>
+          <h3>Green Apple</h3>
+          <h5>$10.00</h5>
+        </div>
+      </div>
+      <button type="button" id="checkout-button">Order</button>
+    </section>
+  </body>
+  <script type="text/javascript">
+    var stripe = Stripe(
+      'pk_test_51GqUjRIdQT9m7TuYz559zeHgrdawKbbytC97VqQgEfDR7HlZ5kn2yq55fXM3a3h0jlwa7jtkb2Cqq6CYgHRBwArQ00ijVcNNBK',
+    )
+    var checkoutButton = document.getElementById('checkout-button')
+
+    checkoutButton.addEventListener('click', function () {
+      fetch('/buy-apple', {
+        method: 'POST',
+      })
+        .then(function (response) {
+          return response.json()
+        })
+        .then(function (session) {
+          return stripe.redirectToCheckout({ sessionId: session.id })
+        })
+        .then(function (result) {
+          if (result.error) {
+            alert(result.error.message)
+          }
+        })
+        .catch(function (error) {
+          console.error('Error:', error)
+        })
+    })
+  </script>
+</html>
